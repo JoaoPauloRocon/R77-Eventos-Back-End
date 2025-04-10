@@ -13,7 +13,8 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rotas principais serão importadas aqui futuramente
-// app.use('/api', require('./routes'));
+app.get('/', (req, res) => {
+    res.send('R77 Eventos rodando 🔥');
+  });
 
 module.exports = app;
