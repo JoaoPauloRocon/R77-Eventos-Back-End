@@ -1,11 +1,9 @@
 class AppException extends Error {
-    constructor(message, statusCode) {
-      super(message);
-      this.name = this.constructor.name;
-      this.statusCode = statusCode || 500;
-      Error.captureStackTrace(this, this.constructor);
-    }
+  constructor(statusCode, message) {
+    super(message);
+    this.statusCode = statusCode;
+    Error.captureStackTrace(this, this.constructor);
   }
-  
-  module.exports = AppException;
-  
+}
+
+module.exports = AppException;

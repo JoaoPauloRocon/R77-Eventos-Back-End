@@ -2,6 +2,7 @@ const AuthService = require('../service/AuthService');
 const RegisterUserDTO = require('../../application/dtos/user/RegisterUserDTO');
 const LoginUserDTO = require('../../application/dtos/user/LoginUserDTO');
 const UserResponseDTO = require('../../application/dtos/user/UserResponseDTO');
+const BadRequestException = require('../../application/exception/BadRequestException');
 
 class AuthController {
     async register(req, res, next) {
@@ -22,7 +23,7 @@ class AuthController {
       try {
         const { error, value } = LoginUserDTO.validate(req.body);
         if (error) {
-          throw new BadRequestException(error.details[0].message);
+          throw new BadRequestExceptioneption(error.details[0].message);
         }
   
         const { token, user } = await AuthService.login(value.email, value.password);

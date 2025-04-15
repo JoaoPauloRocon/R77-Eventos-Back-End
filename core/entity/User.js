@@ -1,8 +1,10 @@
-const { DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../../application/config/database");
 const RoleEnum = require("../../application/enums/RoleEnum");
 
-const User = sequelize.define("User", {
+class User extends Model {}
+
+User.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -33,8 +35,10 @@ const User = sequelize.define("User", {
     defaultValue: RoleEnum.USER
   },
 }, {
+  sequelize,
+  modelName: "User", // Certifique-se de que isso está correto
+  tableName: "users",
   timestamps: true,
-  tableName: "users"
 });
 
 module.exports = User;
