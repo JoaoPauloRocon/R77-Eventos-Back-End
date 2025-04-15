@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const limiter = require('./middlewares/rateLimitMiddleware');
 const cors = require('./middlewares/corsConfig');
+const errorHandler = require('./middlewares/errorHandler');
+const NotFoundException = require('./application/exception/NotFoundException');
 
 
 const app = express();
@@ -14,7 +16,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(limiter);
+
 
 const authRoutes = require('./routes/auth.routes');
 app.use('/auth', authRoutes);
@@ -26,5 +28,11 @@ app.use('/', userRoutes);
 app.get('/', (req, res) => {
     res.send('R77 Eventos rodando 🔥');
 });
+
+app.use((req, res, next) => {
+    next(new NotFoundException('Rota não encontrada'));
+});
+
+app.use(errorHandler);
 
 module.exports = app;
