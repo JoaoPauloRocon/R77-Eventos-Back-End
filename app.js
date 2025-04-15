@@ -7,7 +7,6 @@ const cors = require('./middlewares/corsConfig');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundException = require('./application/exception/NotFoundException');
 
-
 const app = express();
 
 // Middlewares básicos
@@ -17,22 +16,27 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+// Rotas
 const authRoutes = require('./routes/auth.routes');
 app.use('/auth', authRoutes);
 
 const userRoutes = require('./routes/userRoutes');
-app.use('/', userRoutes);
+app.use('/users', userRoutes);
 
+const eventRoutes = require('./routes/eventsRoutes'); // Adicionando as rotas de eventos
+app.use('/events', eventRoutes);
 
+// Página inicial
 app.get('/', (req, res) => {
     res.send('R77 Eventos rodando 🔥');
 });
 
+// Rota para tratar rotas não encontradas
 app.use((req, res, next) => {
     next(new NotFoundException('Rota não encontrada'));
 });
 
+// Middleware de tratamento de erros
 app.use(errorHandler);
 
 module.exports = app;
