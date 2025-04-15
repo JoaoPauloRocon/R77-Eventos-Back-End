@@ -1,108 +1,48 @@
-const Event = require('../entity/Events'); // Importa o modelo de Evento
-const BadRequestException = require('../../application/exception/BadRequestException');
-const { Op } = require('sequelize');
+const EventService = require('../service/EventService');
 
 class EventController {
-  // Listar eventos com paginação e busca
   async getAll(req, res, next) {
     try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const search = req.query.search || '';
-
-      const offset = (page - 1) * limit;
-
-      const events = await Event.findAll({
-        where: {
-          title: {
-            [Op.like]: `%${search}%`,
-          }
-        },
-        offset,
-        limit,
-      });
-
+      const events = await EventService.listEvents(req.query);
       return res.json(events);
     } catch (err) {
       next(err);
     }
   }
 
-  // Detalhar evento
   async getById(req, res, next) {
     try {
-      const event = await Event.findByPk(req.params.id);
-
-      if (!event) {
-        throw new BadRequestException('Evento não encontrado');
-      }
-
+      const event = await EventService.getEventById(req.params.id);
       return res.json(event);
     } catch (err) {
       next(err);
     }
   }
 
-  // Criar evento
   async create(req, res, next) {
     try {
-      const {
-        title,
-        description,
-        date,
-        street,
-        number,
-        neighborhood,
-        city,
-        state,
-        zip_code
-      } = req.body;
-
-      const event = await Event.create({
-        title,
-        description,
-        date,
-        street,
-        number,
-        neighborhood,
-        city,
-        state,
-        zip_code,
-        created_by: req.user.id, // Pega o ID do usuário autenticado
-      });
-
+      const event = await EventService.createEvent(req.body, req.files, req.user.id);
       return res.status(201).json(event);
     } catch (err) {
       next(err);
     }
   }
 
-  // Atualizar evento
   async update(req, res, next) {
     try {
-      const event = await Event.findByPk(req.params.id);
+      let { deleteImages } = req.body;
+      if (typeof deleteImages === 'string') deleteImages = JSON.parse(deleteImages);
 
-      if (!event) {
-        throw new BadRequestException('Evento não encontrado');
-      }
-
-      await event.update(req.body);
-      return res.json(event);
+      const updated = await EventService.updateEvent(req.params.id, req.body, req.files, deleteImages);
+      return res.json(updated);
     } catch (err) {
       next(err);
     }
   }
 
-  // Deletar evento
   async delete(req, res, next) {
     try {
-      const event = await Event.findByPk(req.params.id);
-
-      if (!event) {
-        throw new BadRequestException('Evento não encontrado');
-      }
-
-      await event.destroy();
+      await EventService.deleteEvent(req.params.id);
       return res.status(204).send();
     } catch (err) {
       next(err);

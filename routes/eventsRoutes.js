@@ -1,24 +1,43 @@
-// routes/events.routes.js
-
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const authenticateToken = require('../middlewares/authMiddleware');
 const { isAdmin } = require('../middlewares/roleMiddleware');
-const eventController = require('../core/controller/EventController'); // Importação correta do controlador de eventos
+const eventController = require('../core/controller/EventController');
+
 const router = express.Router();
 
-// GET /events - Lista de eventos com paginação e busca
+// Configuração do armazenamento temporário para imagens
+const tempStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const tempDir = path.join(__dirname, '..', 'resources', 'uploads', 'temp');
+    if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
+    cb(null, tempDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
+// Inicializa o multer
+const upload = multer({
+  storage: tempStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith('image/')) {
+      return cb(new Error('Apenas arquivos de imagem são permitidos.'));
+    }
+    cb(null, true);
+  }
+});
+
+// Rotas
 router.get('/', eventController.getAll);
-
-// GET /events/:id - Detalhes de um evento específico
 router.get('/:id', eventController.getById);
-
-// POST /events - Criação de um novo evento (somente admin)
-router.post('/', authenticateToken, isAdmin, eventController.create);
-
-// PUT /events/:id - Atualização de um evento específico (somente admin)
-router.put('/:id', authenticateToken, isAdmin, eventController.update);
-
-// DELETE /events/:id - Deletar um evento específico (somente admin)
+router.post('/', authenticateToken, isAdmin, upload.array('images'), eventController.create);
+router.put('/:id', authenticateToken, isAdmin, upload.array('images'), eventController.update);
 router.delete('/:id', authenticateToken, isAdmin, eventController.delete);
 
 module.exports = router;
