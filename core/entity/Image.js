@@ -1,7 +1,5 @@
-// src/core/entity/Image.js
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../db/connection');
-const Event = require('./Event'); // Relacionamento com a entidade Event
+const sequelize = require('../../application/config/database');
 
 class Image extends Model {}
 
@@ -24,10 +22,6 @@ Image.init(
     event_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: 'events',
-        key: 'id',
-      },
     },
     uploadedAt: {
       type: DataTypes.DATE,
@@ -42,7 +36,5 @@ Image.init(
     timestamps: false,
   }
 );
-
-Image.belongsTo(Event, { foreignKey: 'event_id', as: 'event' });
 
 module.exports = Image;

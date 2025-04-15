@@ -1,8 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../application/config/database');
-const User = require('./User');  // Certifique-se de importar corretamente o modelo User
-
-console.log('User Model in Event:', User);  // Adicionando log para verificar o modelo User
+const User = require('./User');
 
 class Event extends Model {}
 
@@ -36,14 +34,14 @@ Event.init({
     allowNull: false,
   },
   state: {
-    type: DataTypes.STRING(2),  // Estado com 2 caracteres
+    type: DataTypes.STRING(2),
     allowNull: false,
   },
   zip_code: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      is: /^\d{5}-?\d{3}$/, // Aceita o formato 00000-000 ou 00000000
+      is: /^\d{5}-?\d{3}$/,
     },
   },
   created_by: {
@@ -56,8 +54,6 @@ Event.init({
   tableName: 'events',
   timestamps: true,
 });
-
-console.log('Event Model:', Event);  // Adicionando log para verificar o modelo Event
 
 Event.belongsTo(User, {
   foreignKey: 'created_by',

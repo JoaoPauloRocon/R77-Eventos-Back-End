@@ -2,6 +2,8 @@
 const app = require('./app');
 const dotenv = require('dotenv');
 const sequelize = require('./application/config/database');
+require('./core/entity/associations');
+
 
 dotenv.config();
 
