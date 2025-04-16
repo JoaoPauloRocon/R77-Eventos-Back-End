@@ -1,0 +1,5 @@
+[2025-04-16T19:49:49.295Z] [INFO]: Buscando todos os usuários
+::1 - - [16/Apr/2025:19:49:49 +0000] "GET /users HTTP/1.1" 200 215 "-" "PostmanRuntime/7.43.3"
+[2025-04-16T19:53:16.345Z] [INFO]: Evento "Evento Teste" criado pelo usuário 2 (ID: 21)
+[2025-04-16T19:53:16.371Z] [INFO]: Evento 21 carregado com sucesso
+::1 - - [16/Apr/2025:19:53:16 +0000] "POST /events HTTP/1.1" 201 333 "-" "PostmanRuntime/7.43.3"

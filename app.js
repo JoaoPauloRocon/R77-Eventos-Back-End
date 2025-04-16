@@ -8,11 +8,13 @@ const errorHandler = require('./middlewares/errorHandler');
 const NotFoundException = require('./application/exception/NotFoundException');
 
 const app = express();
+const logger = require('./core/utils/logger');
+app.use(morgan('combined', { stream: logger.stream }));
+
 
 // Middlewares básicos
 app.use(cors);
 app.use(helmet());
-app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,6 +33,7 @@ app.use('/gallery', galleryRoutes);
 
 const ratingRoutes = require('./routes/ratingRoutes');
 app.use('/ratings', ratingRoutes);
+
 
 
 // Página inicial

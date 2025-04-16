@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "🎉 R77 Eventos\r Aplicação web para gerenciamento de eventos com galeria de imagens. Usuários podem se cadastrar, visualizar eventos e explorar imagens. Admins têm acesso a painel de controle com CRUD de eventos e upload de imagens vinculadas.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+"scripts": {
+  "prestart": "node prestart.js",
+  "start": "node app.js",
+  "dev": "nodemon app.js"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
