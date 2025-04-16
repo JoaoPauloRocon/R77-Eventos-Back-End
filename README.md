@@ -40,7 +40,7 @@ API RESTful para gerenciamento de eventos, usuários e avaliações.
 
 5. **Rode o projeto**
    ```bash
-   npm start
+    npm run start:dev
    ```
 
 ---
