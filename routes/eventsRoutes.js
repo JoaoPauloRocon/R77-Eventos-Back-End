@@ -5,6 +5,9 @@ const multer = require('multer');
 const authenticateToken = require('../middlewares/authMiddleware');
 const { isAdmin } = require('../middlewares/roleMiddleware');
 const eventController = require('../core/controller/EventController');
+const validateRequest = require('../middlewares/validateRequest');
+const CreateEventDTO = require('../application/dtos/event/CreateEventDTO');
+const UpdateEventDTO = require('../application/dtos/event/UpdateEventDTO');
 
 const router = express.Router();
 
@@ -36,8 +39,25 @@ const upload = multer({
 // Rotas
 router.get('/', eventController.getAll);
 router.get('/:id', eventController.getById);
-router.post('/', authenticateToken, isAdmin, upload.array('images'), eventController.create);
-router.put('/:id', authenticateToken, isAdmin, upload.array('images'), eventController.update);
+
+router.post(
+  '/',
+  authenticateToken,
+  isAdmin,
+  upload.array('images'),
+  validateRequest(CreateEventDTO),
+  eventController.create
+);
+
+router.put(
+  '/:id',
+  authenticateToken,
+  isAdmin,
+  upload.array('images'),
+  validateRequest(UpdateEventDTO),
+  eventController.update
+);
+
 router.delete('/:id', authenticateToken, isAdmin, eventController.delete);
 
 module.exports = router;
