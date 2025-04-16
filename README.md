@@ -1,57 +1,153 @@
-🎉 R77 Eventos
-Aplicação web para gerenciamento de eventos com galeria de imagens. Usuários podem se cadastrar, visualizar eventos e explorar imagens. Admins têm acesso a painel de controle com CRUD de eventos e upload de imagens vinculadas.
+# R77 Eventos – API
 
-📚 Funcionalidades
-Cadastro, login e autenticação de usuários
+API RESTful para gerenciamento de eventos, usuários e avaliações.
 
-Edição e exclusão da própria conta
+## 🔧 Tecnologias Utilizadas
 
-CRUD completo de eventos (apenas admin)
+- Node.js
+- Express
+- Sequelize + MySQL
+- JWT (Autenticação)
+- Joi (Validação)
+- Swagger (Documentação)
+- Multer (Upload de imagens)
+- Jest + Supertest (Testes automatizados)
 
-Upload de imagens vinculadas a eventos
+---
 
-Galeria de imagens com link para evento relacionado
+## 🚀 Como Rodar o Projeto
 
-Controle de acesso por permissões (usuário/admin)
+1. **Clone o repositório**
+   ```bash
+   git clone https://github.com/seu-usuario/r77-eventos.git
+   cd r77-eventos
+   ```
 
-🛠️ Tecnologias utilizadas
-Backend:
-Node.js + Express
+2. **Instale as dependências**
+   ```bash
+   npm install
+   ```
 
-MySQL + Sequelize
+3. **Configure o `.env`**
+   ```bash
+   cp .env.example .env
+   ```
 
-JWT para autenticação
+4. **Execute as migrations**
+   ```bash
+   npx sequelize db:migrate
+   ```
 
-Multer para upload de imagens
+5. **Rode o projeto**
+   ```bash
+   npm start
+   ```
 
-Frontend:
-React + Vite
+---
 
-Tailwind CSS
+## 🔐 Autenticação
 
-React Router Dom
+Autenticação via token JWT. Para acessar rotas protegidas, inclua no header da requisição:
 
-Axios
+```http
+Authorization: Bearer seu_token_aqui
+```
 
-- Cadastro, login e autenticação de usuários
+---
 
-- Edição e exclusão da própria conta
+## 🧪 Rodando os Testes
 
-- CRUD completo de eventos (apenas admin)
+```bash
+npm test
+```
 
-- Upload de imagens vinculadas a eventos
+---
 
-- Galeria de imagens com link para evento relacionado
+## 📁 Estrutura do Projeto
 
-- Controle de acesso por permissões (usuário/admin)
+```
+application/
+  config/            # Configurações gerais (ex: Swagger)
+  dtos/              # DTOs com validações Joi
+  enums/             # Enums e constantes
+  exception/         # Classes de exceções
+  security/          # Lógica de autenticação/segurança
 
-🛠️ Tecnologias utilizadas
-Backend:
-- Node.js + Express
+core/
+  controller/        # Controllers das rotas
+  entity/            # Models do Sequelize
+  repository/        # Repositórios
+  service/           # Regras de negócio
+  utils/             # Helpers e funções utilitárias
+  validations/       # Middlewares de validação
 
-- MySQL + Sequelize
+db/
+  migration/         # Migrations do Sequelize
+  seeders/           # Dados iniciais
 
-- JWT para autenticação
+middlewares/         # Middlewares globais
+resources/           # Arquivos estáticos (imagens, etc)
+routes/              # Definições de rotas
 
-- Multer para upload de imagens
+app.js               # Inicialização da aplicação
+server.js            # Inicialização do servidor
+```
 
+---
+
+## 📄 Principais Endpoints
+
+### 🧑 Usuários
+
+| Método | Rota            | Descrição                                 |
+|--------|------------------|-------------------------------------------|
+| POST   | `/auth/register` | Cria um novo usuário                      |
+| POST   | `/auth/login`    | Autentica o usuário e retorna um token    |
+| GET    | `/users/me`      | Dados do usuário autenticado              |
+| PUT    | `/users/:id`     | Atualiza dados (self ou admin)           |
+| DELETE | `/users/:id`     | Deleta conta (self ou admin)             |
+| GET    | `/users`         | Lista todos os usuários (admin)          |
+
+---
+
+### 🎉 Eventos
+
+| Método | Rota            | Descrição                                 |
+|--------|------------------|-------------------------------------------|
+| GET    | `/events`        | Lista eventos com paginação e busca       |
+| POST   | `/events`        | Cria um novo evento (autenticado)         |
+| GET    | `/events/:id`    | Detalhes de um evento                     |
+| PUT    | `/events/:id`    | Atualiza evento (criador/admin)          |
+| DELETE | `/events/:id`    | Deleta evento (criador/admin)            |
+
+---
+
+### 🖼️ Imagens de Eventos
+
+| Método | Rota                         | Descrição                      |
+|--------|-------------------------------|--------------------------------|
+| POST   | `/events/:id/images`          | Adiciona imagens ao evento     |
+| DELETE | `/events/:id/images/:imageId` | Deleta uma imagem do evento    |
+
+---
+
+### ⭐ Avaliações
+
+| Método | Rota                   | Descrição                           |
+|--------|-------------------------|-------------------------------------|
+| POST   | `/events/:id/ratings`   | Avalia um evento (nota + comentário)|
+| GET    | `/events/:id/ratings`   | Lista avaliações de um evento       |
+
+---
+
+## 📌 Notas
+
+- Todas as rotas de eventos, imagens e avaliações exigem autenticação com JWT.
+- Apenas o criador do evento ou um admin pode editar ou deletar o evento.
+- Um usuário só pode avaliar um evento uma vez.
+
+---
+
+## 📬 Contato
+
+Em caso de dúvidas ou sugestões: **contato@r77eventos.com.br**
