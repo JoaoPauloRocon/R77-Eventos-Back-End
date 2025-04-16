@@ -4,35 +4,71 @@ const path = require('path');
 const fs = require('fs');
 const BadRequestException = require('../../application/exception/BadRequestException');
 const { Op } = require('sequelize');
+const { paginate, formatDate, generateSlug } = require('../utils'); // Importando os utilitários
 
 class EventService {
+  // Atualizando listEvents para usar o utilitário de paginação
   async listEvents({ page = 1, limit = 10, search = '' }) {
-    const offset = (page - 1) * limit;
-    return await Event.findAll({
+    // Garantir que os valores de page e limit são números válidos
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 10;
+  
+    // Cálculo de offset para paginar corretamente
+    const offset = (pageNumber - 1) * limitNumber;
+  
+    // Usando o paginador para calcular o total de eventos
+    const total = await Event.count({ where: { title: { [Op.like]: `%${search}%` } } });
+  
+    // Chama a função paginate para calcular os dados de paginação
+    const pagination = paginate(pageNumber, limitNumber, total);
+  
+    // Consulta dos eventos com a paginação aplicada
+    const events = await Event.findAll({
       where: { title: { [Op.like]: `%${search}%` } },
       offset,
-      limit,
+      limit: limitNumber,  // Aplica o limite correto
       include: [{ model: Image, as: 'images', attributes: ['filename', 'url'] }],
     });
+  
+    // Retorna os eventos e a paginação
+    return { events, pagination };
   }
 
+  // Método para retornar o evento com a data formatada
   async getEventById(id) {
     const event = await Event.findByPk(id, {
       include: [{ model: Image, as: 'images' }],
     });
 
     if (!event) throw new BadRequestException('Evento não encontrado');
+
+    // Usando o formatador de data
+    event.formattedDate = formatDate(event.date);
     return event;
   }
 
+  // Método para criar o evento, agora com slug
   async createEvent(data, files, userId) {
-    const event = await Event.create({ ...data, created_by: userId });
-    await this._handleImagesUpload(event.id, files);
+    // Gerando o slug para o evento
+    const slug = generateSlug(data.title);
+    const event = await Event.create({ ...data, created_by: userId, slug });
+    
+    if (files && files.length) {
+      await this._handleImagesUpload(event.id, files);
+    }
     return await this.getEventById(event.id);
   }
 
+  // Atualizando o evento, agora com slug
   async updateEvent(id, data, files, deleteImages) {
     const event = await this.getEventById(id);
+
+    // Atualizando o slug caso o título tenha sido modificado
+    if (data.title) {
+      const slug = generateSlug(data.title);
+      data.slug = slug;
+    }
+
     await event.update(data);
 
     if (deleteImages) await this._deleteImages(deleteImages, event.id);
@@ -41,6 +77,7 @@ class EventService {
     return await this.getEventById(event.id);
   }
 
+  // Método para deletar evento
   async deleteEvent(id) {
     const event = await this.getEventById(id);
     await event.destroy();
