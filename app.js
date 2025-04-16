@@ -26,6 +26,10 @@ app.use('/users', userRoutes);
 const eventRoutes = require('./routes/eventsRoutes'); // Adicionando as rotas de eventos
 app.use('/events', eventRoutes);
 
+const galleryRoutes = require('./routes/galleryRoutes');
+app.use('/gallery', galleryRoutes);
+
+
 // Página inicial
 app.get('/', (req, res) => {
     res.send('R77 Eventos rodando 🔥');
