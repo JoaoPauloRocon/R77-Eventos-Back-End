@@ -29,6 +29,9 @@ app.use('/events', eventRoutes);
 const galleryRoutes = require('./routes/galleryRoutes');
 app.use('/gallery', galleryRoutes);
 
+const ratingRoutes = require('./routes/ratingRoutes');
+app.use('/ratings', ratingRoutes);
+
 
 // Página inicial
 app.get('/', (req, res) => {
