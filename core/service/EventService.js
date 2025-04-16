@@ -46,20 +46,34 @@ class EventService {
     await event.destroy();
   }
 
+  // Lida com o upload de imagens
   async _handleImagesUpload(eventId, files) {
     const uploadDir = path.join(__dirname, '..', '..', 'resources', 'uploads', `${eventId}`);
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
     for (const file of files) {
+      const fileExtension = path.extname(file.originalname).toLowerCase();
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif']; // Extensões permitidas
+
+      // Verifica se a extensão do arquivo é permitida
+      if (!allowedExtensions.includes(fileExtension)) {
+        fs.unlinkSync(file.path); // Exclui arquivo inválido
+        throw new BadRequestException('Tipo de arquivo não permitido. Somente imagens são aceitas.');
+      }
+
       const newPath = path.join(uploadDir, file.filename);
 
+      // Verifica se a imagem já existe no banco de dados para evitar duplicação
       const exists = await Image.findOne({ where: { filename: file.filename, event_id: eventId } });
       if (exists) {
-        fs.unlinkSync(file.path);
+        fs.unlinkSync(file.path); // Exclui arquivo duplicado
         continue;
       }
 
+      // Move o arquivo da pasta temporária para a pasta de destino
       fs.renameSync(file.path, newPath);
+
+      // Cria o registro no banco de dados para a imagem
       await Image.create({
         filename: file.filename,
         url: `/uploads/${eventId}/${file.filename}`,
@@ -69,13 +83,14 @@ class EventService {
     }
   }
 
+  // Lida com a exclusão de imagens
   async _deleteImages(imageIds, eventId) {
     for (const imageId of imageIds) {
       const image = await Image.findOne({ where: { id: imageId, event_id: eventId } });
       if (image) {
         const imagePath = path.join(__dirname, '..', '..', 'resources', 'uploads', eventId.toString(), image.filename);
-        if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-        await image.destroy();
+        if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath); // Exclui o arquivo do disco
+        await image.destroy(); // Exclui o registro da imagem no banco de dados
       }
     }
   }
