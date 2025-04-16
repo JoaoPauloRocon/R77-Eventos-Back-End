@@ -34,7 +34,8 @@ app.use('/gallery', galleryRoutes);
 const ratingRoutes = require('./routes/ratingRoutes');
 app.use('/ratings', ratingRoutes);
 
-
+const { swaggerUi, swaggerSpec } = require('./application/config/swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Página inicial
 app.get('/', (req, res) => {
