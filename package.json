@@ -3,21 +3,18 @@
   "version": "1.0.0",
   "description": "🎉 R77 Eventos\r Aplicação web para gerenciamento de eventos com galeria de imagens. Usuários podem se cadastrar, visualizar eventos e explorar imagens. Admins têm acesso a painel de controle com CRUD de eventos e upload de imagens vinculadas.",
   "main": "index.js",
-
-
-"scripts": {
-  "dev": "nodemon server.js",
-  "start": "node server.js",
-  "migrate": "sequelize db:migrate",
-  "seed": "sequelize db:seed:all",
-  "start:dev": "sequelize db:migrate && sequelize db:seed:all && nodemon server.js"
-},
-
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all",
+    "start:dev": "sequelize db:migrate && sequelize db:seed:all && nodemon server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
