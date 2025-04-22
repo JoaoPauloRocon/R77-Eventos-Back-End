@@ -3,7 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const limiter = require('./middlewares/rateLimitMiddleware');
-const cors = require('./middlewares/corsConfig');
+const cors = require('cors');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundException = require('./application/exception/NotFoundException');
 
@@ -11,9 +11,13 @@ const app = express();
 const logger = require('./core/utils/logger');
 app.use(morgan('combined', { stream: logger.stream }));
 
+app.use(cors({
+    origin: 'http://localhost:3001', // libera só pro frontend
+    credentials: true
+  }));
+
 
 // Middlewares básicos
-app.use(cors);
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
